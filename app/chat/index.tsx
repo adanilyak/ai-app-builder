@@ -26,6 +26,8 @@ export default function ChatScreen() {
     const onPress = (item: MessageContentProps) => {
         if (item.contentType === MessageContentType.ARTIFACT) {
             router.push({pathname: '/chat/preview', params: { messageId: item.id }});
+        } else if (item.contentType === MessageContentType.SUGGESTION) {
+            onSendUserMessage(item.text);
         }
     };
 

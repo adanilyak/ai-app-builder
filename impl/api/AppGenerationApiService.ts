@@ -51,8 +51,12 @@ export class AppGenerationApiService implements AppGenerationApiServiceInterface
                     schema: {
                         type: 'object',
                         additionalProperties: false,
-                        required: ['html', 'css', 'js'],
+                        required: ['html', 'css', 'js', 'suggestions', 'text'],
                         properties: {
+                            text: {
+                                type: 'string',
+                                description: 'Short, friendly message summarizing the result. If suggestions exist, encourage the user to tap one. Never mention being an AI model.',
+                            },
                             html: {
                                 type: 'string',
                                 description: 'HTML markup for the page. Must NOT contain <style> or <script> tags.'
@@ -64,6 +68,15 @@ export class AppGenerationApiService implements AppGenerationApiServiceInterface
                             js: {
                                 type: 'string',
                                 description: 'Optional JavaScript for interactions. Must not use network calls, alert, prompt, or window.open.'
+                            },
+                            suggestions: {
+                                type: 'array',
+                                description: 'Optional array of short, actionable improvement ideas the user can use as follow-up prompts.',
+                                minItems: 0,
+                                maxItems: 3,
+                                items: {
+                                    type: 'string'
+                                }
                             }
                         }
                     },
@@ -77,19 +90,23 @@ export class AppGenerationApiService implements AppGenerationApiServiceInterface
 
         const json = JSON.parse(response.output_text)
         
-        return [
-            {
-                kind: 'html',
-                content: json.html
-            },
-            {
-                kind: 'css',
-                content: json.css
-            },
-            {
-                kind: 'js',
-                content: json.js
-            }
-        ];
+        return {
+            text: json.text || 'Your app has been generated!',
+            items: [
+                {
+                    kind: 'html',
+                    content: json.html
+                },
+                {
+                    kind: 'css',
+                    content: json.css
+                },
+                {
+                    kind: 'js',
+                    content: json.js
+                }
+            ],
+            suggestions: json.suggestions || []
+        };
     }
 }

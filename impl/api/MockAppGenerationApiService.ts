@@ -68,19 +68,23 @@ export class MockAppGenerationApiService implements AppGenerationApiServiceInter
   </body>
 </html>
   `
-        return [
-            {
-                kind: 'html',
-                content: html
-            },
-            {
-                kind: 'css',
-                content: ""
-            },
-            {
-                kind: 'js',
-                content: ""
-            }
-        ];
+        return {
+            text: "Your app has been generated!",
+            items: [
+                {
+                    kind: 'html',
+                    content: html
+                },
+                {
+                    kind: 'css',
+                    content: ""
+                },
+                {
+                    kind: 'js',
+                    content: ""
+                }
+            ],
+            suggestions: ["Add a button to the page", "Add a input to the page", "Add a list to the page"]
+        };
     }
 }

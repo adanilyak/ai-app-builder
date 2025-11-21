@@ -20,6 +20,11 @@ export function useChat(selectedChatId?: string) {
     if (state.isGeneratingResponse) {
         messages.unshift(systemGeneratingMessageContentProps());
     }
+    if (state.currentSuggestions.length > 0) {
+        state.currentSuggestions.forEach((suggestion, index) => {
+            messages.unshift(assistantSuggestionMessageContentProps(suggestion, String(index)));
+        });
+    }
 
     return {
         title,
@@ -61,5 +66,14 @@ function systemGeneratingMessageContentProps(): MessageContentProps {
         text: 'Generating app...',
         contentType: MessageContentType.LOADING,
         bubbleType: MessageBubbleType.SYSTEM,
+    };
+}
+
+function assistantSuggestionMessageContentProps(suggestion: string, id: string): MessageContentProps {
+    return {
+        id: 'assistant-suggestion-message-' + id,
+        text: suggestion,
+        contentType: MessageContentType.SUGGESTION,
+        bubbleType: MessageBubbleType.ASSISTANT_SUGGESTION,
     };
 }

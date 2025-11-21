@@ -2,6 +2,12 @@ import { AppGenerationApiResponseItem } from "@/impl/api/AppGenerationApiTypes";
 import { FsArtifact } from "@/impl/storage/artifacts/ArtifactsFsTypes";
 import uuid from 'react-native-uuid';
 
+export type AppGenerationResult = {
+    text: string;
+    artifacts: AppGenerationArtifact[];
+    suggestions: string[];
+};
+
 export type AppGenerationArtifactKind = 'html' | 'css' | 'js' | 'other';
 
 export type AppGenerationArtifact = {

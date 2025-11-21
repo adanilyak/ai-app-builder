@@ -6,6 +6,7 @@ export enum MessageBubbleType {
     USER = 'USER',
     ASSISTANT = 'ASSISTANT',
     SYSTEM = 'SYSTEM',
+    ASSISTANT_SUGGESTION = 'ASSISTANT_SUGGESTION',
 }
 
 type MessageBubbleProps = {
@@ -28,6 +29,10 @@ export default function MessageBubble({ children, onPress, type }: MessageBubble
         },
         [MessageBubbleType.SYSTEM]: {
             backgroundColor: theme.colors.systemBubble,
+            justifyContent: 'flex-start',
+        },
+        [MessageBubbleType.ASSISTANT_SUGGESTION]: {
+            backgroundColor: theme.colors.assistantSuggestionBubble,
             justifyContent: 'flex-start',
         },
     };

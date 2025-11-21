@@ -5,6 +5,7 @@ export type ChatState = {
     currentUserInput?: string;
     isGeneratingResponse: boolean;
     messages: Message[];
+    currentSuggestions: string[];
     previewAppUri?: string,
     error?: string;
 };

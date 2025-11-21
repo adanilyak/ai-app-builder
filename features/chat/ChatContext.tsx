@@ -25,14 +25,15 @@ type Action =
     | { type: ActionType.SET_CONVERSATION; conversationId: string }
     | { type: ActionType.SET_MESSAGES; messages: Message[] }
     | { type: ActionType.START_GENERATING_RESPONSE; message: Message }
-    | { type: ActionType.SUCCESS_GENERATING_RESPONSE; message: Message }
+    | { type: ActionType.SUCCESS_GENERATING_RESPONSE; message: Message; suggestions: string[] }
     | { type: ActionType.ERROR_GENERATING_RESPONSE; error: string }
     | { type: ActionType.SELECT_MESSAGE_ARTIFACT; messageId: string }
     | { type: ActionType.RESET_CHAT };
 
 const initialState: ChatState = {
     isGeneratingResponse: false,
-    messages: []
+    messages: [],
+    currentSuggestions: [],
 };
 
 function reducer(state: ChatState, action: Action): ChatState {
@@ -73,6 +74,7 @@ function reducer(state: ChatState, action: Action): ChatState {
                 currentUserInput: undefined,
                 isGeneratingResponse: true,
                 messages: [action.message, ...state.messages],
+                currentSuggestions: [],
             };
 
         case ActionType.SUCCESS_GENERATING_RESPONSE:
@@ -81,6 +83,7 @@ function reducer(state: ChatState, action: Action): ChatState {
                 ...state,
                 isGeneratingResponse: false,
                 messages: [action.message, ...state.messages],
+                currentSuggestions: action.suggestions,
             };
 
         // case ActionType.SUCCESS_GENERATE_APP:
@@ -237,15 +240,15 @@ async function generateApp(
     conversationId: string,
     content: string
 ): Promise<void> {
-    const artifacts = await appGenerationRepository.generateApp(conversationId, content);
+    const generationResult = await appGenerationRepository.generateApp(conversationId, content);
     const assistantMessage = await chatsRepository.createMessage(
         chatId,
         'assistant',
-        'Your app has been generated!',
-        artifacts.map(artifact => ({
+        generationResult.text,
+        generationResult.artifacts.map(artifact => ({
             id: artifact.id,
             kind: artifact.kind,
         }))
     );
-    dispatch({ type: ActionType.SUCCESS_GENERATING_RESPONSE, message: assistantMessage });
+    dispatch({ type: ActionType.SUCCESS_GENERATING_RESPONSE, message: assistantMessage, suggestions: generationResult.suggestions });
 }
