@@ -1,24 +1,30 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import 'react-native-reanimated';
-
-import { useColorScheme } from '@/hooks/use-color-scheme';
-
-export const unstable_settings = {
-  anchor: '(tabs)',
-};
+import HistoryDrawerContent from "@/components/drawer/HistoryDrawerContent";
+import { DependenciesProvider } from "@/di/DependenciesContext";
+import { HistoryProvider } from "@/features/history/HistoryContext";
+import { useTheme } from "@/styles/theme";
+import { Drawer } from "expo-router/drawer";
+import { StyleSheet } from "react-native";
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
+    const theme = useTheme();
+    const styles = StyleSheet.create({
+        drawerContent: {
+            backgroundColor: theme.colors.background,
+        },
+    });
 
-  return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal', title: 'Modal' }} />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
-  );
+    return (
+        <DependenciesProvider>
+            <HistoryProvider>
+                <Drawer
+                    drawerContent={props => <HistoryDrawerContent {...props} style={styles.drawerContent} />}
+                >
+                    <Drawer.Screen
+                        name="chat"
+                        options={{ headerShown: false }}
+                    />
+                </Drawer>
+            </HistoryProvider>
+        </DependenciesProvider>
+    );
 }
