@@ -51,8 +51,12 @@ export class AppGenerationApiService implements AppGenerationApiServiceInterface
                     schema: {
                         type: 'object',
                         additionalProperties: false,
-                        required: ['html', 'css', 'js', 'suggestions', 'text'],
+                        required: ['html', 'css', 'js', 'suggestions', 'text', 'title'],
                         properties: {
+                            title: {
+                                type: 'string',
+                                description: 'Very short human-readable name for the app (1-3 words) suitable for use as a chat header.',
+                            },
                             text: {
                                 type: 'string',
                                 description: 'Short, friendly message summarizing the result. If suggestions exist, encourage the user to tap one. Never mention being an AI model.',
@@ -91,7 +95,8 @@ export class AppGenerationApiService implements AppGenerationApiServiceInterface
         const json = JSON.parse(response.output_text)
         
         return {
-            text: json.text || 'Your app has been generated!',
+            title: json.title,
+            text: json.text,
             items: [
                 {
                     kind: 'html',

@@ -13,6 +13,7 @@ Your output MUST ALWAYS follow this JSON structure:
   "js": "Optional JavaScript code only.",
   "suggestions": ["Short idea 1", "Short idea 2"],     // optional, max 3
   "text": "Short friendly message."                    // optional
+  "title": "Very short human-readable name for the app (1-3 words) suitable for use as a chat header."
 }
 
 Strict rules:
@@ -55,4 +56,6 @@ function buildFullHtml(html, css, js) {
   \`;
 }
 
-Make sure "html", "css", and "js" can be inserted into this template without modification.`;
+Make sure "html", "css", and "js" can be inserted into this template without modification.
+Make sure that "text" encourages user to use suggestions if they exist in response.`
+;

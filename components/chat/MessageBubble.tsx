@@ -32,7 +32,9 @@ export default function MessageBubble({ children, onPress, type }: MessageBubble
             justifyContent: 'flex-start',
         },
         [MessageBubbleType.ASSISTANT_SUGGESTION]: {
-            backgroundColor: theme.colors.assistantSuggestionBubble,
+            backgroundColor: theme.colors.background,
+            borderColor: theme.colors.assistantSuggestionBubbleBorder,
+            borderWidth: 1,
             justifyContent: 'flex-start',
         },
     };
@@ -49,7 +51,7 @@ export default function MessageBubble({ children, onPress, type }: MessageBubble
                 disabled={!onPress}
                 style={[
                     styles.bubble,
-                    { backgroundColor: bubbleStyle[type].backgroundColor },
+                    bubbleStyle[type]
                 ]}
             >
                 {children}

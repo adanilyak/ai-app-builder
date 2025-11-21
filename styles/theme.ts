@@ -25,7 +25,8 @@ const light = {
         assistantBubbleText: '#000000',
         systemBubble: '#FFFFFF',
         systemBubbleText: '#000000',
-        assistantSuggestionBubble: '#FFFFFF',
+        assistantSuggestionBubbleBorder: '#D3D3D3',
+        assistantSuggestionBubble: '#F0F0F0',
         assistantSuggestionBubbleText: '#000000',
     },
 };
@@ -55,7 +56,8 @@ const dark = {
         assistantBubbleText: '#000000',
         systemBubble: '#000000',
         systemBubbleText: '#FFFFFF',
-        assistantSuggestionBubble: '#000000',
+        assistantSuggestionBubbleBorder: '#404040',
+        assistantSuggestionBubble: '#404040',
         assistantSuggestionBubbleText: '#FFFFFF',
     },
 };

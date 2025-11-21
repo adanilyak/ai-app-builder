@@ -3,6 +3,7 @@ import { FsArtifact } from "@/impl/storage/artifacts/ArtifactsFsTypes";
 import uuid from 'react-native-uuid';
 
 export type AppGenerationResult = {
+    title: string;
     text: string;
     artifacts: AppGenerationArtifact[];
     suggestions: string[];

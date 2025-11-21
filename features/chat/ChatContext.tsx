@@ -1,5 +1,6 @@
 import { useDependencies } from '@/di/DependenciesContext';
 import { AppGenerationRepositoryInterface } from '@/impl/repo/appGeneration/AppGenerationRepository';
+import { AppGenerationResult } from '@/impl/repo/appGeneration/AppGenerationTypes';
 import { ChatsRepositoryInterface } from '@/impl/repo/chats/ChatsRepository';
 import { Chat, Message } from '@/impl/repo/chats/ChatTypes';
 import React, { Dispatch, createContext, useContext, useReducer } from 'react';
@@ -11,6 +12,7 @@ export enum ActionType {
     SET_USER_INPUT = 'SET_USER_INPUT',
     SET_CHAT = 'SET_CHAT',
     SET_CONVERSATION = 'SET_CONVERSATION',
+    SET_CHAT_TITLE = 'SET_CHAT_TITLE',
     SET_MESSAGES = 'SET_MESSAGES',
     START_GENERATING_RESPONSE = 'START_GENERATING_RESPONSE',
     SUCCESS_GENERATING_RESPONSE = 'SUCCESS_GENERATING_RESPONSE',
@@ -23,6 +25,7 @@ type Action =
     | { type: ActionType.SET_USER_INPUT; input: string }
     | { type: ActionType.SET_CHAT; chat: Chat }
     | { type: ActionType.SET_CONVERSATION; conversationId: string }
+    | { type: ActionType.SET_CHAT_TITLE; title: string }
     | { type: ActionType.SET_MESSAGES; messages: Message[] }
     | { type: ActionType.START_GENERATING_RESPONSE; message: Message }
     | { type: ActionType.SUCCESS_GENERATING_RESPONSE; message: Message; suggestions: string[] }
@@ -60,6 +63,16 @@ function reducer(state: ChatState, action: Action): ChatState {
                 },
             };
 
+        case ActionType.SET_CHAT_TITLE:
+            if (!state.chat) return state;
+            return {
+                ...state,
+                chat: {
+                    ...state.chat,
+                    title: action.title,
+                },
+            };
+
         case ActionType.SET_MESSAGES:
             LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
             return {
@@ -86,26 +99,6 @@ function reducer(state: ChatState, action: Action): ChatState {
                 currentSuggestions: action.suggestions,
             };
 
-        // case ActionType.SUCCESS_GENERATE_APP:
-        //     return {
-        //         ...state,
-        //         isGeneratingIdea: false,
-        //         historyContent: [createAppBuilderAssistantContentItem(action.payload), ...state.historyContent],
-        //     };
-
-        // case ActionType.ERROR_GENERATE_APP:
-        //     return {
-        //         ...state,
-        //         isGeneratingIdea: false,
-        //         error: action.payload,
-        //     };
-
-        // case ActionType.SELECT_APP:
-        //     return {
-        //         ...state,
-        //         previewAppUri: action.payload,
-        //     };
-
         case ActionType.RESET_CHAT:
             return initialState;
 
@@ -113,8 +106,6 @@ function reducer(state: ChatState, action: Action): ChatState {
             return state;
     }
 };
-
-
 
 type ContextValue = {
     state: ChatState;
@@ -134,10 +125,12 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
     const { chatsRepository, appGenerationRepository } = useDependencies();
 
     const onOpenChat = async (chatId?: string) => {
+        if (chatId && chatId === state.chat?.id) {
+            return;
+        }
+        dispatch({ type: ActionType.RESET_CHAT });
         if (chatId) {
             await loadChat(chatsRepository, dispatch, chatId);
-        } else {
-            dispatch({ type: ActionType.RESET_CHAT });
         }
     };
 
@@ -148,7 +141,7 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
     const onSendUserMessage = async (content: string) => {
         const chat = await createChatIfNeededAndSet(state, chatsRepository, dispatch);
         selectChat(chat.id);
-        await sendUserMessage(chatsRepository, appGenerationRepository, dispatch, chat.id, content, chat.conversationId);
+        await sendUserMessage(chatsRepository, appGenerationRepository, dispatch, chat.id, content, chat.conversationId, chat.title);
     };
 
     const value: ContextValue = {
@@ -213,7 +206,7 @@ async function createConversationIfNeededAndSet(
         return conversationId;
     }
     const newConversationId = await appGenerationRepository.createConversation();
-    await chatsRepository.updateChat(chatId, newConversationId);
+    await chatsRepository.updateChatConversationId(chatId, newConversationId);
     dispatch({ type: ActionType.SET_CONVERSATION, conversationId: newConversationId });
     return newConversationId;
 }
@@ -225,11 +218,16 @@ async function sendUserMessage(
     chatId: string,
     content: string,
     conversationId?: string,
+    chatTitle?: string,
 ): Promise<void> {
     const userMessage = await chatsRepository.createMessage(chatId, 'user', content);
     dispatch({ type: ActionType.START_GENERATING_RESPONSE, message: userMessage });
     const newConversationId = await createConversationIfNeededAndSet(chatsRepository, appGenerationRepository, dispatch, chatId, conversationId);
-    await generateApp(chatsRepository, appGenerationRepository, dispatch, chatId, newConversationId, content);
+    const generationResult = await generateApp(chatsRepository, appGenerationRepository, dispatch, chatId, newConversationId, content);
+    if (!chatTitle) {
+        await chatsRepository.updateChatTitle(chatId, generationResult.title);
+        dispatch({ type: ActionType.SET_CHAT_TITLE, title: generationResult.title });
+    }
 }
 
 async function generateApp(
@@ -239,7 +237,7 @@ async function generateApp(
     chatId: string,
     conversationId: string,
     content: string
-): Promise<void> {
+): Promise<AppGenerationResult> {
     const generationResult = await appGenerationRepository.generateApp(conversationId, content);
     const assistantMessage = await chatsRepository.createMessage(
         chatId,
@@ -251,4 +249,5 @@ async function generateApp(
         }))
     );
     dispatch({ type: ActionType.SUCCESS_GENERATING_RESPONSE, message: assistantMessage, suggestions: generationResult.suggestions });
+    return generationResult
 }

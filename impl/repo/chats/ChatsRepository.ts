@@ -3,7 +3,8 @@ import { ChatsStorageServiceInterface } from "@/impl/storage/chats/ChatsStortage
 
 export interface ChatsRepositoryInterface {
     createChat(conversationId?: string, title?: string): Promise<Chat>;
-    updateChat(chatId: string, conversationId?: string, title?: string): Promise<void>
+    updateChatConversationId(chatId: string, conversationId?: string): Promise<void>;
+    updateChatTitle(chatId: string, title?: string): Promise<void>;
     getChat(id: string): Promise<Chat | null>;
     getChats(): Promise<Chat[]>;
     getRecentChats(): Promise<Chat[]>;
@@ -26,8 +27,12 @@ export class ChatsRepository implements ChatsRepositoryInterface {
         return createChatFromDb(chat);
     }
 
-    async updateChat(chatId: string, conversationId?: string, title?: string): Promise<void> {
-        await this.storage.updateChat(chatId, conversationId, title);
+    async updateChatConversationId(chatId: string, conversationId?: string): Promise<void> {
+        await this.storage.updateChatConversationId(chatId, conversationId);
+    }
+
+    async updateChatTitle(chatId: string, title?: string): Promise<void> {
+        await this.storage.updateChatTitle(chatId, title);
     }
 
     async getChat(id: string): Promise<Chat | null> {

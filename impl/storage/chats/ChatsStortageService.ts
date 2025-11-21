@@ -4,7 +4,8 @@ import { DbArtifact, DbChat, DbChatSortDesc, DbMessage, DbMessageRole } from "./
 
 export interface ChatsStorageServiceInterface {
     createChat(conversationId?: string, title?: string): Promise<DbChat>;
-    updateChat(chatId: string, conversationId?: string, title?: string): Promise<void>;
+    updateChatConversationId(chatId: string, conversationId?: string): Promise<void>;
+    updateChatTitle(chatId: string, title?: string): Promise<void>;
     getChat(id: string): Promise<DbChat | null>;
     getChats(sortDesc?: DbChatSortDesc): Promise<DbChat[]>
     getMessage(messageId: string): Promise<DbMessage | null>;
@@ -33,11 +34,19 @@ export class ChatsStorageService implements ChatsStorageServiceInterface {
         return chat;
     }
 
-    async updateChat(chatId: string, conversationId?: string, title?: string): Promise<void> {
+    async updateChatConversationId(chatId: string, conversationId?: string): Promise<void> {
         const updated_at = Date.now();
         await this.db.run(
-            'UPDATE chats SET conversation_id = ?, title = ?, updated_at = ? WHERE id = ?',
-            [conversationId ?? null, title ?? null, updated_at, chatId]
+            'UPDATE chats SET conversation_id = ?, updated_at = ? WHERE id = ?',
+            [conversationId ?? null, updated_at, chatId]
+        );
+    }
+
+    async updateChatTitle(chatId: string, title?: string): Promise<void> {
+        const updated_at = Date.now();
+        await this.db.run(
+            'UPDATE chats SET title = ?, updated_at = ? WHERE id = ?',
+            [title ?? null, updated_at, chatId]
         );
     }
 

@@ -1,4 +1,5 @@
 export type AppGenerationApiResponse = {
+    title: string;
     text: string;
     items: AppGenerationApiResponseItem[];
     suggestions: string[];

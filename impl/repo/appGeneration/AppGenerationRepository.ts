@@ -24,6 +24,7 @@ export class AppGenerationRepository implements AppGenerationRepositoryInterface
         const fsArtifacts = artifacts.map(createFsArtifactFromAppGenerationArtifact);
         await this.storage.storeArtifacts(fsArtifacts);
         return {
+            title: response.title,
             text: response.text,
             artifacts,
             suggestions: response.suggestions,

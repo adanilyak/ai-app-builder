@@ -69,6 +69,7 @@ export class MockAppGenerationApiService implements AppGenerationApiServiceInter
 </html>
   `
         return {
+            title: "Mock App",
             text: "Your app has been generated!",
             items: [
                 {
