@@ -44,5 +44,5 @@ Inside the Expo CLI:
 ```bash
 npx expo start
 ```
-3. Scan the QR code shown in the terminal or browser using Expo Go.  
-   The app will open automatically on your device.
+3. Scan the QR code shown in the terminal using Camera app.  
+   The app will open on your device inside Expo Go app.
