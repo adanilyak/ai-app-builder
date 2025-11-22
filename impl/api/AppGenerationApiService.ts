@@ -31,7 +31,6 @@ export class AppGenerationApiService implements AppGenerationApiServiceInterface
                 }
             ]
         });
-        console.log('createConversation', response.id);
         return response.id;
     }
 

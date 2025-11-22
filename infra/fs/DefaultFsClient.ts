@@ -13,7 +13,6 @@ export class DefaultFsClient implements FsClient {
     async writeTextFile(content: string, ...pathComponents: PathComponent[]): Promise<void> {
         const fullPath = Paths.join(this.basePath, ...pathComponents);
         const file = new File(fullPath);
-        console.log('writeTextFile', fullPath);
         file.create({ intermediates: true });
         return file.write(content);
     }

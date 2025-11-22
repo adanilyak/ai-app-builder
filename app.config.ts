@@ -5,6 +5,8 @@ export default {
         name: "ai-app-builder",
         slug: "ai-app-builder",
 
+        scheme: "aiappbuilder",
+
         extra: {
             openaiApiKey: process.env.OPENAI_API_KEY,
         },
