@@ -10,6 +10,7 @@ export default function PreviewScreen() {
     const theme = useTheme();
     const { messageId } = useLocalSearchParams<{ messageId?: string }>();
     const { html, loading, error } = usePreview(messageId as string);
+
     return (
         <>
             <Stack.Screen

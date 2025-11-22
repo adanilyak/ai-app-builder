@@ -27,10 +27,8 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     contentContainer: {
-        paddingLeft: 16,
-        paddingRight: 16,
-        paddingTop: 8,
-        paddingBottom: 8,
+        paddingHorizontal: 16,
+        paddingVertical: 8,
     },
     itemContainer: {
         marginVertical: 4,
