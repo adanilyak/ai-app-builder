@@ -1,5 +1,4 @@
 import { AppGenerationApiService, AppGenerationApiServiceInterface } from '@/impl/api/AppGenerationApiService';
-import { MockAppGenerationApiService } from '@/impl/api/MockAppGenerationApiService';
 import { AppGenerationRepository, AppGenerationRepositoryInterface } from '@/impl/repo/appGeneration/AppGenerationRepository';
 import { ArtifactsStorageService, ArtifactsStorageServiceInterface } from '@/impl/storage/artifacts/ArtifactsStorageService';
 import { ChatsStorageServiceInterface, createChatsStorageService } from '@/impl/storage/chats/ChatsStortageService';
@@ -7,6 +6,7 @@ import { DbClient } from '@/infra/db/DbClient';
 import { createDbClient } from '@/infra/db/SqlliteDbClient';
 import { createDefaultFsClient } from '@/infra/fs/DefaultFsClient';
 import { FsClient } from '@/infra/fs/FsClient';
+import Constants from 'expo-constants';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { ChatsRepository, ChatsRepositoryInterface } from '../impl/repo/chats/ChatsRepository';
@@ -28,6 +28,7 @@ const DependenciesContext = createContext<Dependencies | undefined>(undefined);
 
 export function DependenciesProvider({ children }: { children: React.ReactNode }) {
     const [dependencies, setDependencies] = useState<Dependencies | null>(null);
+    const { openaiApiKey } = Constants.expoConfig!.extra!;
 
     useEffect(() => {
         let cancelled = false;
@@ -41,10 +42,9 @@ export function DependenciesProvider({ children }: { children: React.ReactNode }
 
             const appGenerationApi = new AppGenerationApiService({
                 model: 'gpt-4o-mini',
-                apiKey: "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",
+                apiKey: openaiApiKey,
                 maxOutputTokens: 10000
             });
-            const mockAppGenerationApi = new MockAppGenerationApiService();
 
             const chatsRepository = new ChatsRepository(chatsStorage);
             const appGenerationRepository = new AppGenerationRepository(appGenerationApi, artifactStorage);
@@ -53,7 +53,7 @@ export function DependenciesProvider({ children }: { children: React.ReactNode }
                 setDependencies({ 
                     db, fs, 
                     artifactStorage, chatsStorage,
-                    appGenerationApi, //: mockAppGenerationApi,
+                    appGenerationApi,
                     chatsRepository, appGenerationRepository 
                 });
             }
