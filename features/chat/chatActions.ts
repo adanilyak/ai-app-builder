@@ -8,7 +8,8 @@ export enum ChatActionType {
     SET_MESSAGES = 'SET_MESSAGES',
     START_GENERATING_RESPONSE = 'START_GENERATING_RESPONSE',
     SUCCESS_GENERATING_RESPONSE = 'SUCCESS_GENERATING_RESPONSE',
-    ERROR_GENERATING_RESPONSE = 'ERROR_GENERATING_RESPONSE',
+    SET_ERROR = 'SET_ERROR',
+    CLEAR_ERROR = 'CLEAR_ERROR',
     SELECT_MESSAGE_ARTIFACT = 'SELECT_MESSAGE_ARTIFACTS',
     RESET_CHAT = 'RESET_CHAT',
 }
@@ -21,7 +22,8 @@ export type ChatAction =
     | { type: ChatActionType.SET_MESSAGES; messages: Message[] }
     | { type: ChatActionType.START_GENERATING_RESPONSE; message: Message }
     | { type: ChatActionType.SUCCESS_GENERATING_RESPONSE; message: Message; suggestions: string[] }
-    | { type: ChatActionType.ERROR_GENERATING_RESPONSE; error: string }
+    | { type: ChatActionType.SET_ERROR; error: string }
+    | { type: ChatActionType.CLEAR_ERROR }
     | { type: ChatActionType.SELECT_MESSAGE_ARTIFACT; messageId: string }
     | { type: ChatActionType.RESET_CHAT };
 
@@ -62,9 +64,13 @@ export const chatActions = {
         suggestions,
     }),
 
-    errorGeneratingResponse: (error: string): ChatAction => ({
-        type: ChatActionType.ERROR_GENERATING_RESPONSE,
+    setError: (error: string): ChatAction => ({
+        type: ChatActionType.SET_ERROR,
         error,
+    }),
+
+    clearError: (): ChatAction => ({
+        type: ChatActionType.CLEAR_ERROR,
     }),
 
     selectMessageArtifact: (messageId: string): ChatAction => ({

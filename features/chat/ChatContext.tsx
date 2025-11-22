@@ -41,6 +41,10 @@ export const ChatProvider: React.FC<{ children: React.ReactNode }> = ({
 
     const onSendUserMessage = async (content: string) => {
         const chat = await createChatIfNeeded(state, chatsRepository, dispatch);
+        if (!chat) {
+            return;
+        }
+        
         selectChat(chat.id);
         
         await sendUserMessageOperation(

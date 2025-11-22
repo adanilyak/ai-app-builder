@@ -62,6 +62,20 @@ export function chatReducer(state: ChatState, action: ChatAction): ChatState {
                 isGeneratingResponse: false,
                 messages: [action.message, ...state.messages],
                 currentSuggestions: action.suggestions,
+                error: undefined,
+            };
+
+        case ChatActionType.SET_ERROR:
+            return {
+                ...state,
+                isGeneratingResponse: false,
+                error: action.error,
+            };
+
+        case ChatActionType.CLEAR_ERROR:
+            return {
+                ...state,
+                error: undefined,
             };
 
         case ChatActionType.RESET_CHAT:
