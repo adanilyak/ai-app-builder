@@ -46,3 +46,9 @@ npx expo start
 ```
 3. Scan the QR code shown in the terminal using Camera app.  
    The app will open on your device inside Expo Go app.
+
+## To Do
+
+#### 1. Code
+- Create an error view. Error state is done.
+- Add paging to chat messages.
